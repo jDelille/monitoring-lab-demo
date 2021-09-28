@@ -1,17 +1,25 @@
 const express = require('express');
-const rollbar = require('rollbar');
 const path = require('path');
-//heroku port 
-const PORT = process.env.PORT || 5656
 
 const app = express();
 
+const Rollbar = require('rollbar');
+const rollbar = new Rollbar({
+    accessToken: '256b8a13776b40178fffb8e1eafbfa7c',
+    captureUncaught: true,
+    captureUnhandledRejections: true
+})
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './client/index.html'))
+    rollbar.info('HTML was avenged...')
 })
 
 
 
+//heroku port 
+const PORT = process.env.PORT || 5656
 
+app.use(rollbar.errorHandler())
 
 app.listen(PORT, () => console.log(`Avengers... Assemble on port: ${PORT}`));
